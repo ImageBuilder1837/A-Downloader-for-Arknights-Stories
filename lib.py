@@ -175,7 +175,8 @@ def get_page_text(data_text: str) -> str:
                          == str else None, ans.groups()))
             name, endp, sentence = group[0], bool(group[2]), group[3]
             if not string.startswith("multi"):
-                string = f"multi{name + '  ' if name else ''}"
+                name = name + '\u3000' if name else ''
+                string = f"multi{name}"
             string += f"{sentence}"
             if endp:
                 string += f"\n\n"
@@ -193,13 +194,14 @@ def get_page_text(data_text: str) -> str:
         elif ans := re.match(subtitle, line):
             sentence = ans.group(1).strip()
             if sentence:
-                string = f"居中显示文本  {sentence}\n\n"
+                string = f"居中显示文本\u3000{sentence}\n\n"
                 page_text += string
         elif ans := re.match(dialog, line):
             name, sentence = map(lambda x: x.strip() if type(
                 x) == str else None, ans.groups())
             if sentence:
-                string = f"{name + '  ' if name else ''}{sentence}\n\n"
+                name = name + '\u3000' if name else ''
+                string = f"{name}{sentence}\n\n"
                 page_text += string
         elif ans := re.match(decision, line):
             string = ""
