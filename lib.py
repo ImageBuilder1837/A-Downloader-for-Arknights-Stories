@@ -17,8 +17,10 @@ decision = re.compile(
 predicate = re.compile(r'\[[Pp]redicate\(.*references="(.*)".*\)\]')
 multiline = re.compile(
     r'\[[Mm]ultiline\(name="(.*)"(\s*,\s*end=(true))?\)\](.*)')
+sticker = re.compile(r'\[[Ss]ticker\(.*text="(.*?)".*\)\]')
 demand = re.compile(r'(\[.*\])|(\{\{.*)|(\}\})')
 act = re.compile(r'//act\s([\S\s]*)//memory')
+line_sep = re.compile(r'((\\r)?\\n)+')
 ptn_all = re.compile(r'title:.*?/干员密录/\d+=.*?\s')
 amount = 5
 
@@ -213,6 +215,10 @@ def get_page_text(data_text: str) -> str:
             num = ans.group(1).strip()
             string = f"选项{num}对应剧情：\n\n"
             page_text += string
+        elif ans := re.match(sticker, line):
+            sentence = ans.group(1).strip()
+            string = f"居中淡入文本\u3000{sentence}\n\n"
+            page_text += string
         elif re.match(demand, line) or line.startswith("//"):
             continue
         else:
@@ -220,6 +226,7 @@ def get_page_text(data_text: str) -> str:
             page_text += string
     if page_text.strip().endswith("//"):
         page_text = page_text.strip()[:-2]
+    page_text = re.sub(line_sep, ' ', page_text)
     return page_text
 
 
